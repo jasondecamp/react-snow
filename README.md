@@ -1,4 +1,4 @@
-# react-snow
+# <img src="demo/public/favicon.svg" alt="" width="28" height="28"> react-snow
 
 [![CI](https://github.com/jasondecamp/react-snow/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jasondecamp/react-snow/actions/workflows/ci.yml)
 
