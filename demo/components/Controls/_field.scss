@@ -1,0 +1,112 @@
+@use '../../styles/tokens' as *;
+
+// Shared layout for a labeled control: label and value on one line, the input
+// below.
+@mixin field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+}
+
+@mixin fieldHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: $space-s;
+}
+
+@mixin fieldValue {
+  font-family: $font-mono;
+  font-size: $font-size-s;
+  color: $color-text-muted;
+}
+
+// A custom slider: a track holding the rail, a fill, and one or more range
+// inputs stacked on top with only their thumbs visible. The rail and the fill
+// area are both inset by half a thumb, the span of the thumb centers, so the
+// fill lines up with the rail and with each thumb.
+@mixin sliderTrack {
+  position: relative;
+  height: $thumb-size;
+
+  &::before {
+    position: absolute;
+    top: 50%;
+    right: $thumb-size * 0.5;
+    left: $thumb-size * 0.5;
+    height: $track-height;
+    content: '';
+    background: $color-track;
+    border-radius: $track-height;
+    transform: translateY(-50%);
+  }
+}
+
+@mixin sliderFillArea {
+  position: absolute;
+  inset: 0 $thumb-size * 0.5;
+  pointer-events: none;
+}
+
+@mixin sliderFill {
+  position: absolute;
+  top: 50%;
+  height: $track-height;
+  background: $color-accent;
+  border-radius: $track-height;
+  transform: translateY(-50%);
+}
+
+@mixin sliderThumb {
+  box-sizing: border-box;
+  width: $thumb-size;
+  height: $thumb-size;
+  cursor: pointer;
+  pointer-events: auto;
+  background: $color-text;
+  border: 2px solid $color-accent;
+  border-radius: 50%;
+}
+
+// Vendor pseudo-elements stay in separate rules: a selector list with one
+// unknown pseudo-element is dropped entirely.
+@mixin sliderInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  pointer-events: none;
+  appearance: none;
+  background: transparent;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-slider-runnable-track {
+    height: 100%;
+    background: transparent;
+  }
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+
+    @include sliderThumb;
+  }
+
+  &::-moz-range-track {
+    background: transparent;
+  }
+
+  &::-moz-range-thumb {
+    @include sliderThumb;
+  }
+
+  &:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 3px $color-focus-ring;
+  }
+
+  &:focus-visible::-moz-range-thumb {
+    box-shadow: 0 0 0 3px $color-focus-ring;
+  }
+}

@@ -1,0 +1,8 @@
+# pnpm settings (pnpm reads them here, not from package.json).
+
+# pnpm 12 requires an explicit decision for every dependency with a build
+# script; in CI an undecided one fails `pnpm install`.
+allowBuilds:
+  # Native file watcher used only by the Sass CLI's --watch mode. Vite compiles
+  # Sass through the sass-embedded API, so the watcher is never used here.
+  '@parcel/watcher': false

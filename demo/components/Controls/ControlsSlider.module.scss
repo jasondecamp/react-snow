@@ -1,0 +1,34 @@
+@use 'field';
+
+.slider {
+  @include field.field;
+}
+
+.header {
+  @include field.fieldHeader;
+}
+
+.value {
+  @include field.fieldValue;
+}
+
+.track {
+  @include field.sliderTrack;
+}
+
+.fillArea {
+  @include field.sliderFillArea;
+}
+
+.fill {
+  @include field.sliderFill;
+
+  left: 0;
+}
+
+// A single slider jumps to wherever the track is clicked.
+.input {
+  @include field.sliderInput;
+
+  pointer-events: auto;
+}

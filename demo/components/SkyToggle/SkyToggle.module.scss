@@ -1,0 +1,79 @@
+@use '../../styles/tokens' as *;
+
+$inset: 3px;
+$knob-size: $sky-toggle-height - $inset * 2;
+$icon-size: 16px;
+
+// Night: a dark track with a light knob on the left and the moon showing on the
+// right. Day: a light track with a dark knob on the right and the sun showing
+// on the left. The knob always covers the inactive side.
+.skyToggle {
+  position: relative;
+  flex: none;
+  width: $sky-toggle-width;
+  height: $sky-toggle-height;
+  padding: 0;
+  cursor: pointer;
+  background: $color-switch-dark;
+  border: 1px solid $color-panel-border;
+  border-radius: $sky-toggle-height;
+  transition: background $transition-default;
+
+  &:focus-visible {
+    outline: 2px solid $color-focus-ring;
+    outline-offset: 2px;
+  }
+}
+
+.knob {
+  position: absolute;
+  top: $inset - 1px;
+  left: $inset - 1px;
+  width: $knob-size;
+  height: $knob-size;
+  background: $color-switch-knob-light;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  transition: transform $transition-default, background $transition-default;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  width: $icon-size;
+  height: $icon-size;
+  transform: translateY(-50%);
+  transition: opacity $transition-default;
+}
+
+// Centered on the side of the track the knob isn't on.
+.sun {
+  left: $inset - 1px + ($knob-size - $icon-size) * 0.5;
+  opacity: 0;
+  fill: none;
+  stroke: $color-switch-dark;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.moon {
+  right: $inset - 1px + ($knob-size - $icon-size) * 0.5;
+  fill: $color-switch-knob-light;
+}
+
+.day {
+  background: $color-switch-light;
+
+  .knob {
+    background: $color-switch-knob-dark;
+    transform: translateX($sky-toggle-width - $sky-toggle-height);
+  }
+
+  .sun {
+    opacity: 1;
+  }
+
+  .moon {
+    opacity: 0;
+  }
+}

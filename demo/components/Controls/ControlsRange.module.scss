@@ -1,0 +1,33 @@
+@use 'field';
+
+.range {
+  @include field.field;
+}
+
+.header {
+  @include field.fieldHeader;
+}
+
+.value {
+  @include field.fieldValue;
+}
+
+.track {
+  @include field.sliderTrack;
+}
+
+.fillArea {
+  @include field.sliderFillArea;
+}
+
+.fill {
+  @include field.sliderFill;
+}
+
+.input {
+  @include field.sliderInput;
+}
+
+.onTop {
+  z-index: 1;
+}

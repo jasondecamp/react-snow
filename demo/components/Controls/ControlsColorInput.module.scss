@@ -1,0 +1,51 @@
+@use '../../styles/tokens' as *;
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: $space-s;
+}
+
+.label {
+  flex: none;
+  width: $inline-label-width;
+  font-size: $font-size-s;
+  color: $color-text-muted;
+}
+
+.picker {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid $color-panel-border;
+  border-radius: 4px;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: 3px;
+  }
+
+  &::-moz-color-swatch {
+    border: none;
+    border-radius: 3px;
+  }
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: $space-xs $space-s;
+  font-family: $font-mono;
+  font-size: $font-size-s;
+  color: $color-text;
+  background: transparent;
+  border: 1px solid $color-panel-border;
+  border-radius: 4px;
+}

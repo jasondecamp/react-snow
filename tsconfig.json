@@ -1,0 +1,26 @@
+{
+  // Type-checks everything (library, tests, demo, configs). The build uses
+  // tsconfig.build.json, which emits src/ only.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom/vitest"],
+    "noEmit": true,
+    // The demo imports the library by package name, resolved to src/ (as in
+    // demo/vite.config.ts).
+    "paths": {
+      "react-snow": ["./src/react/index.ts"],
+      "react-snow/core": ["./src/core/index.ts"]
+    }
+  },
+  "include": ["src", "demo", "*.config.ts", "vitest.setup.ts"]
+}

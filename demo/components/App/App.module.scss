@@ -1,0 +1,85 @@
+@use '../../styles/tokens' as *;
+
+.scene {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient($color-night-top, $color-night-bottom);
+  transition: background-color $transition-default;
+}
+
+.day {
+  background: linear-gradient($color-day-top, $color-day-bottom);
+}
+
+.panel {
+  position: absolute;
+  top: $space-m;
+  right: $space-m;
+  bottom: $space-m;
+  display: flex;
+  flex-direction: column;
+  gap: $space-m;
+  width: $panel-width;
+  padding: $space-m;
+  overflow-y: auto;
+  background: $color-panel;
+  border: 1px solid $color-panel-border;
+  border-radius: $radius;
+  backdrop-filter: blur(6px);
+
+  @media (max-width: 640px) {
+    top: auto;
+    left: $space-m;
+    width: auto;
+    max-height: 50%;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-s;
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-s;
+}
+
+.button {
+  padding: $space-xs $space-s;
+  font: inherit;
+  font-size: $font-size-s;
+  color: $color-text;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid $color-panel-border;
+  border-radius: 4px;
+  transition: border-color $transition-default;
+
+  &:hover {
+    border-color: $color-accent;
+  }
+}
+
+// flex: none, because overflow-x drops a flex item's min-height to 0, so a
+// scrolling panel would otherwise squeeze the snippet instead of scrolling.
+.snippet {
+  flex: none;
+  margin: 0;
+  padding: $space-s;
+  overflow-x: auto;
+  font-family: $font-mono;
+  font-size: $font-size-s;
+  color: $color-text-muted;
+  border: 1px solid $color-panel-border;
+  border-radius: 4px;
+}
