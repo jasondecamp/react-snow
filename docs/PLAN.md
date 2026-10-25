@@ -38,8 +38,8 @@ The rewrite keeps the concept and the behaviors worth keeping (wind, pointer-dri
 | 16 | Flake look | Depth-cued default sprite: a round dot with a soft edge. `size` (default `[2, 6]` px) and `opacity` (default `[0.4, 1]`) are linked, so small flakes are dimmer and slower and large ones brighter and faster. `color` is one CSS color or a `[near, far]` pair, also depth-linked: the nearest flakes get `near`, the farthest `far`, with 8 even blends between (one pre-rendered sprite each, so drawing stays allocation-free). `color` alpha multiplies with `opacity`. Rendered at `devicePixelRatio`. |
 | 17 | Visibility | An `IntersectionObserver` idles the loop while the canvas is offscreen. `requestAnimationFrame` already idles hidden tabs. |
 | 18 | Repo | `~/work/react-snow`, public GitHub repo `jasondecamp/react-snow`. Node 24, pnpm 12, ESLint 10 flat config with the fourfightingfoxes style rules, Vitest (core in `node` with injected random and clock; renderer, hook, and component in jsdom with a stubbed 2D context). Feature branches and PRs; CI runs lint, test, and build on every PR. MIT license, crediting Scott Schiller's Snowstorm as the inspiration (clean-room rewrite, no code copied). A `CLAUDE.md` adapted from fourfightingfoxes. |
-| 19 | Releases | Bumping `package.json`'s version in a PR and merging it to `main` releases: the workflow sees a version with no matching tag, then lints, tests, builds, commits `dist/` on top of the source in a release-only commit, tags `v<version>`, and creates a GitHub Release. Merges without a bump don't release. `0.x` until the defaults are tuned; `1.0.0` ships with the Pages demo. |
-| 20 | Demo | A local Vite playground in `demo/` (not in the package) importing from `src/`, with a control for every option and the instance methods. Deployed to GitHub Pages once the defaults are tuned (1.0). |
+| 19 | Releases | Bumping `package.json`'s version in a PR and merging it to `main` releases: the workflow sees a version with no matching tag, then lints, tests, builds, commits `dist/` on top of the source in a release-only commit, tags `v<version>`, and creates a GitHub Release. Merges without a bump don't release. `0.x` until the defaults are tuned. |
+| 20 | Demo | A local Vite playground in `demo/` (not in the package) importing from `src/`, with a control for every option and the instance methods. Deployed to GitHub Pages from 0.2.0, so it can be shared while the defaults are tuned: a job in `release.yml` builds and publishes it on each release (a separate workflow listening for releases would never fire, because releases created with `GITHUB_TOKEN` don't trigger workflows). Served at `https://jasondecamp.github.io/react-snow/`, so the deploy build sets Vite's `base` to `/react-snow/`. |
 
 ## Options (defaults to be tuned in the playground)
 
@@ -78,9 +78,9 @@ docs/PLAN.md
 ## Phases
 
 1. **0.1.0** (built on branch `initial-sdk`): everything in the decisions above except SVG flakes, gusts, and the Pages deploy. Repo scaffolding, core, React layer, tests, playground, README, `CLAUDE.md`, CI, release workflow.
-2. **0.2.0:** SVG and image flakes (`flake: { svg }` / `{ src }`), rasterized per size, optional per-flake rotation.
+2. **0.2.0:** SVG and image flakes (`flake: { svg }` / `{ src }`), rasterized per size, optional per-flake rotation; GitHub Pages deploy of the playground.
 3. **0.3.0:** gusts (`gusts: true`).
-4. **1.0.0:** defaults tuned in the playground; GitHub Pages demo.
+4. **1.0.0:** defaults tuned in the playground.
 
 ## Out of scope
 

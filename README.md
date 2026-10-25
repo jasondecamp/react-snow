@@ -1,5 +1,7 @@
 # react-snow
 
+[![CI](https://github.com/jasondecamp/react-snow/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jasondecamp/react-snow/actions/workflows/ci.yml)
+
 Falling snow on a `<canvas>`: a framework-free snow SDK, plus a React hook (`useSnow`) and component (`<Snow>`).
 
 - One canvas per storm, drawn from pre-rendered sprites. Hundreds of flakes cost about what a handful of DOM nodes would.

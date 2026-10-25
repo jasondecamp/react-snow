@@ -1,9 +1,12 @@
 name: CI
 
-# Every pull request: lint, typecheck, test, and build. Releases happen in
-# release.yml when a version bump merges to main.
+# Every pull request, and every push to main (which keeps the README badge
+# current): lint, typecheck, test, and build. Releases happen in release.yml
+# when a version bump merges to main.
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
