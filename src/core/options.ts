@@ -1,4 +1,4 @@
-import type { Range, ResolvedSnowOptions, SnowOptions } from './types.js';
+import type { FlakeShape, Range, ResolvedSnowOptions, SnowOptions } from './types.js';
 
 export const defaultOptions: ResolvedSnowOptions = {
   density: 0.5,
@@ -11,6 +11,7 @@ export const defaultOptions: ResolvedSnowOptions = {
   opacity: [0.4, 1],
   color: '#fff',
   flake: 'dot',
+  rotate: false,
   stick: true,
   groundTime: [4, 10],
   melt: true,
@@ -35,6 +36,14 @@ const resolveRange = (range: Range, fallback: Range, min: number, max: number): 
   return low <= high ? [low, high] : [high, low];
 };
 
+/** A flake shape the renderer can draw, or the dot for anything malformed. */
+const resolveFlake = (flake: unknown): FlakeShape => {
+  if (typeof flake !== 'object' || flake == null) return 'dot';
+  if ('svg' in flake && typeof flake.svg === 'string') return { svg: flake.svg };
+  if ('src' in flake && typeof flake.src === 'string') return { src: flake.src };
+  return 'dot';
+};
+
 /** Fill in defaults, drop `undefined` values, and clamp everything into its valid range. */
 export const resolveOptions = (options: SnowOptions): ResolvedSnowOptions => {
   const defined = Object.fromEntries(
@@ -53,6 +62,7 @@ export const resolveOptions = (options: SnowOptions): ResolvedSnowOptions => {
     opacity: resolveRange(merged.opacity, defaultOptions.opacity, 0, 1),
     groundTime: resolveRange(merged.groundTime, defaultOptions.groundTime, 0, Infinity),
     pointerStrength: Math.max(0, finiteOr(merged.pointerStrength, defaultOptions.pointerStrength)),
+    flake: resolveFlake(merged.flake),
   };
 };
 
@@ -63,4 +73,5 @@ export const reduceMotion = (options: ResolvedSnowOptions): ResolvedSnowOptions 
   wind: clamp(options.wind, -reducedMotionMaxWind, reducedMotionMaxWind),
   twinkle: false,
   followPointer: false,
+  rotate: false,
 });

@@ -29,3 +29,69 @@ export const createDotSprite = (doc: Document, color: string, pixelSize: number)
   context.fillRect(0, 0, pixelSize, pixelSize);
   return sprite;
 };
+
+/**
+ * An image fitted inside the square sprite, centered, keeping its aspect
+ * ratio. With a `tint`, only the image's alpha is kept: the color fills it
+ * (source-in), so the image works as a silhouette.
+ */
+export const createImageSprite = (doc: Document, image: HTMLImageElement, pixelSize: number, tint?: string): Sprite | null => {
+  const sprite = doc.createElement('canvas');
+  sprite.width = pixelSize;
+  sprite.height = pixelSize;
+  const context = sprite.getContext('2d');
+  if (context == null) return null;
+  // An SVG without an intrinsic size can report 0; treat it as square.
+  const naturalWidth = image.naturalWidth || 1;
+  const naturalHeight = image.naturalHeight || 1;
+  const scale = pixelSize / Math.max(naturalWidth, naturalHeight);
+  const width = naturalWidth * scale;
+  const height = naturalHeight * scale;
+  context.drawImage(image, (pixelSize - width) / 2, (pixelSize - height) / 2, width, height);
+  if (tint != null) {
+    context.globalCompositeOperation = 'source-in';
+    context.fillStyle = tint;
+    context.fillRect(0, 0, pixelSize, pixelSize);
+  }
+  return sprite;
+};
+
+/** Whether a URL names a PNG: a `.png` path (before any query or hash) or a PNG data URL. */
+export const isPngUrl = (url: string) => /\.png(?:[?#]|$)/i.test(url) || /^data:image\/png[;,]/i.test(url);
+
+const svgNamespace = 'http://www.w3.org/2000/svg';
+
+const parseSvg = (markup: string) => {
+  const root = new DOMParser().parseFromString(markup, 'image/svg+xml').documentElement;
+  const valid = root instanceof SVGSVGElement && root.getElementsByTagName('parsererror').length === 0;
+  return valid ? root : null;
+};
+
+/**
+ * SVG markup as a data URL with `currentColor` resolved to `color`, or null if
+ * it isn't SVG. Markup without an `xmlns` (as inline SVG in HTML often is) gets
+ * one. A root without `width` and `height` takes them from its `viewBox`, since
+ * an SVG image needs an intrinsic size to draw in every browser.
+ */
+export const svgDataUrl = (markup: string, color: string): string | null => {
+  if (typeof DOMParser === 'undefined') return null;
+  const root = parseSvg(markup) ?? parseSvg(markup.replace(/<svg\b/, `<svg xmlns="${svgNamespace}"`));
+  if (root == null) return null;
+  root.style.setProperty('color', color);
+  const [, , viewBoxWidth, viewBoxHeight] = (root.getAttribute('viewBox') ?? '').trim().split(/[\s,]+/).map(Number);
+  if (viewBoxWidth != null && viewBoxHeight != null && viewBoxWidth > 0 && viewBoxHeight > 0) {
+    if (!root.hasAttribute('width')) root.setAttribute('width', String(viewBoxWidth));
+    if (!root.hasAttribute('height')) root.setAttribute('height', String(viewBoxHeight));
+  }
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(root))}`;
+};
+
+/** Load an image, resolving once it can be drawn. */
+export const loadImage = (doc: Document, url: string): Promise<HTMLImageElement> => (
+  new Promise((resolve, reject) => {
+    const image = doc.createElement('img');
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`Couldn't load ${url.slice(0, 100)}`));
+    image.src = url;
+  })
+);

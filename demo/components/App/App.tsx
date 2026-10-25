@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Snow } from 'react-snow';
 import type { SnowOptions } from 'react-snow';
 import { defaultOptions } from 'react-snow/core';
+import { crystalFlake, imageFlake } from '../../flakes';
 import { Controls } from '../Controls/Controls';
 import type { ControlValue } from '../Controls/ControlsContext';
 import { Logo } from '../Logo/Logo';
@@ -13,6 +14,8 @@ type Options = Required<SnowOptions>;
 
 const formatValue = (value: ControlValue) => {
   if (typeof value === 'string') return `'${value}'`;
+  if (typeof value === 'object' && 'svg' in value) return `{{ svg: '${value.svg}' }}`;
+  if (typeof value === 'object' && 'src' in value) return `{{ src: '${value.src}' }}`;
   if (Array.isArray(value)) return `{[${value.map((item) => (typeof item === 'string' ? `'${item}'` : item)).join(', ')}]}`;
   return `{${String(value)}}`;
 };
@@ -92,7 +95,13 @@ export const App = () => {
           <Controls.Group title='Look'>
             <Controls.Range name='size' label='Size (px)' min={0.5} max={20} step={0.5} />
             <Controls.Range name='opacity' label='Opacity' min={0} max={1} step={0.05} />
+            <Controls.Choice name='flake' label='Flake'>
+              <Controls.ChoiceOption value='dot' label='Dot' />
+              <Controls.ChoiceOption value={crystalFlake} label='SVG' />
+              <Controls.ChoiceOption value={imageFlake} label='PNG' />
+            </Controls.Choice>
             <Controls.Color name='color' label='Color (near to far)' />
+            <Controls.Toggle name='rotate' label='Rotate' />
             <Controls.Toggle name='twinkle' label='Twinkle' />
           </Controls.Group>
           <Controls.Group title='Ground'>

@@ -40,6 +40,8 @@ The rewrite keeps the concept and the behaviors worth keeping (wind, pointer-dri
 | 18 | Repo | `~/work/react-snow`, public GitHub repo `jasondecamp/react-snow`. Node 24, pnpm 12, ESLint 10 flat config with the fourfightingfoxes style rules, Vitest (core in `node` with injected random and clock; renderer, hook, and component in jsdom with a stubbed 2D context). Feature branches and PRs; CI runs lint, test, and build on every PR. MIT license, crediting Scott Schiller's Snowstorm as the inspiration (clean-room rewrite, no code copied). A `CLAUDE.md` adapted from fourfightingfoxes. |
 | 19 | Releases | Bumping `package.json`'s version in a PR and merging it to `main` releases: the workflow sees a version with no matching tag, then lints, tests, builds, commits `dist/` on top of the source in a release-only commit, tags `v<version>`, and creates a GitHub Release. Merges without a bump don't release. `0.x` until the defaults are tuned. |
 | 20 | Demo | A local Vite playground in `demo/` (not in the package) importing from `src/`, with a control for every option and the instance methods. Deployed to GitHub Pages from 0.2.0, so it can be shared while the defaults are tuned: a job in `release.yml` builds and publishes it on each release (a separate workflow listening for releases would never fire, because releases created with `GITHUB_TOKEN` don't trigger workflows). Served at `https://jasondecamp.github.io/react-snow/`, so the deploy build sets Vite's `base` to `/react-snow/`. |
+| 21 | SVG and PNG flakes | `flake` is `'dot'`, `{ svg: markup }`, or `{ src: pngUrl }`. In `{ svg }`, `currentColor` resolves to `color` (set as the root's `color` style, one rasterization per color step); other colors stay as written. `{ src }` must be a PNG (`.png` path or `data:image/png` URL; anything else falls back to the dot): it loads once and only its alpha is used, tinted with each color step (source-in), so `color` and the depth blend apply as they do to dots. (Changed on 2026-10-25 from drawing images as-is.) Both fit inside a `size`-wide square keeping their aspect ratio, rasterized once at the sprite size. A new source draws nothing until it loads; a new color for a loaded SVG keeps the old sprites until the new ones are ready. A failed load or non-PNG `src` falls back to the dot with one `console.warn`. The renderer calls back on load so a paused canvas repaints. |
+| 22 | Rotation | `rotate: boolean` (default `false`), with a built-in spin: each flake gets a random start angle and spins at 30–90°/s (scaled by depth) in a random direction. Grounded flakes stop spinning. Reduced motion turns it off. |
 
 ## Options (defaults to be tuned in the playground)
 
@@ -54,7 +56,8 @@ The rewrite keeps the concept and the behaviors worth keeping (wind, pointer-dri
 | `size` | `[2, 6]` | Flake diameter range, px. |
 | `opacity` | `[0.4, 1]` | Linked to size. |
 | `color` | `'#fff'` | Any CSS color, or a `[near, far]` pair blended by depth. |
-| `flake` | default dot | Sprite source slot; SVG/image in 0.2. |
+| `flake` | `'dot'` | `'dot'`, `{ svg }`, or `{ src }`. |
+| `rotate` | `false` | Random start angle and a slow spin. |
 | `stick` | `true` | |
 | `groundTime` | `[4, 10]` | Seconds a landed flake rests before melting. |
 | `melt` | `true` | |
@@ -78,7 +81,7 @@ docs/PLAN.md
 ## Phases
 
 1. **0.1.0** (built on branch `initial-sdk`): everything in the decisions above except SVG flakes, gusts, and the Pages deploy. Repo scaffolding, core, React layer, tests, playground, README, `CLAUDE.md`, CI, release workflow.
-2. **0.2.0:** SVG and image flakes (`flake: { svg }` / `{ src }`), rasterized per size, optional per-flake rotation; GitHub Pages deploy of the playground.
+2. **0.2.0** (built on branch `svg-image-flakes`; decisions 21–22): SVG and image flakes (`flake: { svg }` / `{ src }`), rasterized per size, optional per-flake rotation (`rotate`); GitHub Pages deploy of the playground.
 3. **0.3.0:** gusts (`gusts: true`).
 4. **1.0.0:** defaults tuned in the playground.
 

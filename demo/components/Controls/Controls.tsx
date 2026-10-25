@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import { ControlsChoice } from './ControlsChoice';
+import { ControlsChoiceOption } from './ControlsChoiceOption';
 import { ControlsColor } from './ControlsColor';
 import { ControlsContext } from './ControlsContext';
 import type { ControlValue } from './ControlsContext';
@@ -37,3 +39,5 @@ Controls.Slider = ControlsSlider;
 Controls.Range = ControlsRange;
 Controls.Toggle = ControlsToggle;
 Controls.Color = ControlsColor;
+Controls.Choice = ControlsChoice;
+Controls.ChoiceOption = ControlsChoiceOption;

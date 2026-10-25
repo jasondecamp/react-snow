@@ -4,9 +4,12 @@
 
 Falling snow on a `<canvas>`: a framework-free snow SDK, plus a React hook (`useSnow`) and component (`<Snow>`).
 
+Try every option in the [playground](https://jasondecamp.github.io/react-snow/).
+
 - One canvas per storm, drawn from pre-rendered sprites. Hundreds of flakes cost about what a handful of DOM nodes would.
 - Delta-time physics: the same speed at 60Hz and 120Hz.
 - Flakes fill the sky from the top, sway, land along the bottom edge, and melt.
+- Soft dots by default, or any SVG or PNG shape, optionally spinning.
 - The loop idles whenever nothing can change: paused, offscreen, hidden tab, or no flakes left.
 
 ## Install
@@ -14,8 +17,8 @@ Falling snow on a `<canvas>`: a framework-free snow SDK, plus a React hook (`use
 Releases are git tags with the built files, installed straight from GitHub:
 
 ```bash
-pnpm add github:jasondecamp/react-snow#semver:^0.1.0
-# or pin one release: github:jasondecamp/react-snow#v0.1.0
+pnpm add github:jasondecamp/react-snow#semver:^0.2.0
+# or pin one release: github:jasondecamp/react-snow#v0.2.0
 ```
 
 `#main` and commit installs don't work: only release tags contain `dist/`. React (>= 19) is an optional peer dependency, needed only for the React entry point.
@@ -94,15 +97,28 @@ snow.update({ wind: -20 });
 | `size` | `[2, 6]` | Flake diameter range, px. |
 | `opacity` | `[0.4, 1]` | Linked to size, so small flakes read as far away. |
 | `color` | `'#fff'` | Any CSS color, or a `[near, far]` pair: the nearest flakes get `near`, the farthest `far`, and depths between get a blend. Alpha multiplies with `opacity`. |
-| `flake` | `'dot'` | The flake look. SVG and image flakes are planned. |
+| `flake` | `'dot'` | The flake look: `'dot'`, `{ svg: markup }`, or `{ src: pngUrl }`. See [Flakes](#flakes). |
+| `rotate` | `false` | Each flake starts at a random angle and slowly spins while it falls. |
 | `stick` | `true` | Flakes rest along the bottom edge before melting. |
 | `groundTime` | `[4, 10]` | Seconds a landed flake rests. Past about 2 resting flakes per 100px of width, the oldest melt early. |
 | `melt` | `true` | Flakes shrink and fade as they melt. Otherwise they fade quickly. |
 | `twinkle` | `false` | Falling flakes occasionally flicker. |
 | `followPointer` | `false` | The pointer's horizontal position over the canvas bends the wind. Touch is ignored. |
 | `pointerStrength` | `1` | The pointer's push at the canvas edges, as a multiple of `speed`. |
-| `respectReducedMotion` | `true` | Under `prefers-reduced-motion: reduce`, cap fall speed at 20 px/s and wind at 10 px/s, and turn off twinkle and pointer wind. |
+| `respectReducedMotion` | `true` | Under `prefers-reduced-motion: reduce`, cap fall speed at 20 px/s and wind at 10 px/s, and turn off twinkle, pointer wind, and rotation. |
 | `prefill` | `false` | Start with a full sky. Read once, at creation. |
+
+### Flakes
+
+```jsx
+<Snow flake={{ svg: '<svg viewBox="0 0 10 10"><path fill="currentColor" d="…"/></svg>' }} size={[8, 16]} rotate />
+<Snow flake={{ src: '/images/flake.png' }} />
+```
+
+- `{ svg }` takes SVG markup. `currentColor` in it follows `color`, including a `[near, far]` depth blend; other colors are drawn as written. A missing `xmlns` is added.
+- `{ src }` takes a PNG URL (a `.png` path or a `data:image/png` URL). Only its alpha is used, as a silhouette that `color` fills, with the same depth blend. Draw the shape in any solid color on a transparent background.
+- Both are fitted inside a `size`-wide square, keeping their aspect ratio, and rasterized once per size rather than every frame.
+- Flakes stay invisible until a new source loads. If it fails to load, or a `src` isn't a PNG, the default dot is drawn instead, with a console warning.
 
 ### Reduced motion
 
@@ -123,9 +139,10 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build      # tsc -> dist/
+pnpm build:demo # playground -> demo/dist/
 ```
 
-Releases: bump `version` in a pull request. Merging it to `main` builds, tags `v<version>`, and creates a GitHub Release. See [`docs/PLAN.md`](docs/PLAN.md) for the design.
+Releases: bump `version` in a pull request. Merging it to `main` builds, tags `v<version>`, creates a GitHub Release, and deploys the playground to GitHub Pages. See [`docs/PLAN.md`](docs/PLAN.md) for the design.
 
 ## Credits
 

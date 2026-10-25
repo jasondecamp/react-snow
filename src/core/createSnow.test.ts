@@ -1,4 +1,4 @@
-import { stubBrowser } from '../test/browserStubs.js';
+import { settle, stubBrowser } from '../test/browserStubs.js';
 import type { BrowserStubs } from '../test/browserStubs.js';
 import { createSnow } from './createSnow.js';
 
@@ -72,6 +72,16 @@ describe('createSnow', () => {
     snow.pause();
     vi.mocked(browser.context.clearRect as () => void).mockClear();
     browser.resize();
+    expect(browser.context.clearRect).toHaveBeenCalled();
+    expect(browser.pendingFrames()).toBe(0);
+  });
+
+  it('repaints when a flake image loads while paused', async () => {
+    const snow = createSnow(canvas, { prefill: true, flake: { src: 'flake.png' } });
+    snow.pause();
+    vi.mocked(browser.context.clearRect as () => void).mockClear();
+    browser.images[0]?.load();
+    await settle();
     expect(browser.context.clearRect).toHaveBeenCalled();
     expect(browser.pendingFrames()).toBe(0);
   });

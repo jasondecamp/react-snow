@@ -12,9 +12,16 @@ export type SnowControls = {
   clear: () => void;
 };
 
+// Ranges and flake shapes are compared by value, so an inline literal like
+// `size={[2, 6]}` or `flake={{ svg }}` doesn't count as a change every render.
 const sameValue = (a: unknown, b: unknown) => {
   if (Array.isArray(a) && Array.isArray(b)) {
     return a.length === b.length && a.every((value, index) => Object.is(value, b[index]));
+  }
+  if (typeof a === 'object' && typeof b === 'object' && a != null && b != null) {
+    const aEntries = Object.entries(a);
+    return aEntries.length === Object.keys(b).length
+      && aEntries.every(([key, value]) => Object.is(value, (b as Record<string, unknown>)[key]));
   }
   return Object.is(a, b);
 };

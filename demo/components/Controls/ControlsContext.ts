@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
-import type { ColorRange, Range } from 'react-snow';
+import type { ColorRange, FlakeShape, Range } from 'react-snow';
 
-export type ControlValue = number | boolean | string | Range | ColorRange;
+export type ControlValue = number | boolean | string | Range | ColorRange | FlakeShape;
 
 export type ControlsContextValue = {
   values: Record<string, ControlValue>;
