@@ -1,0 +1,40 @@
+@use '../../styles/tokens' as *;
+
+// A segment: the radio itself is hidden, and the label shows its state.
+.option {
+  flex: 1;
+  padding: $space-xs $space-s;
+  font-size: $font-size-s;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid $color-panel-border;
+  transition: background $transition-default, border-color $transition-default;
+
+  &:first-child {
+    border-radius: 4px 0 0 4px;
+  }
+
+  &:last-child {
+    border-radius: 0 4px 4px 0;
+  }
+
+  &:hover {
+    border-color: $color-accent;
+  }
+
+  &:has(:checked) {
+    background: $color-accent;
+    border-color: $color-accent;
+  }
+
+  &:has(:focus-visible) {
+    outline: 2px solid $color-focus-ring;
+    outline-offset: 2px;
+  }
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}

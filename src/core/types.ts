@@ -5,10 +5,17 @@ export type Range = readonly [min: number, max: number];
 export type ColorRange = readonly [near: string, far: string];
 
 /**
- * The look of a flake. Only the default soft dot exists so far; SVG and image
- * flakes join this union later (docs/PLAN.md, 0.2.0).
+ * The look of a flake: the default soft dot, SVG markup, or a PNG URL. SVG and
+ * PNG flakes are fitted inside a `size`-wide square, keeping their aspect
+ * ratio, and stay invisible until they load. A source that fails to load (or a
+ * `src` that isn't a PNG) falls back to the dot.
+ *
+ * - `{ svg }`: SVG markup. `currentColor` in it resolves to `color` (with the
+ *   depth blend of a `[near, far]` pair); other colors are drawn as written.
+ * - `{ src }`: a PNG URL (a `.png` path or a `data:image/png` URL). Only its
+ *   alpha is used: `color` fills the shape, with the same depth blend.
  */
-export type FlakeShape = 'dot';
+export type FlakeShape = 'dot' | { readonly svg: string } | { readonly src: string };
 
 export type SnowOptions = {
   /** Average falling flakes per 100×100 CSS-pixel area. Grounded flakes don't count. `>= 0`, default `0.5`. */
@@ -37,8 +44,10 @@ export type SnowOptions = {
    * multiplies with `opacity`. Default `'#fff'`.
    */
   color?: string | ColorRange;
-  /** The look of each flake. Default `'dot'`. */
+  /** The look of each flake: `'dot'`, `{ svg }` markup, or a PNG `{ src }` tinted by `color`. Default `'dot'`. */
   flake?: FlakeShape;
+  /** Whether each flake starts at a random angle and slowly spins as it falls. Invisible on the round dot. Default `false`. */
+  rotate?: boolean;
   /** Whether flakes come to rest along the bottom edge before melting. Otherwise they fall out of view. Default `true`. */
   stick?: boolean;
   /** Seconds a landed flake rests before it melts. Default `[4, 10]`. */

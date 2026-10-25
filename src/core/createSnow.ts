@@ -23,7 +23,10 @@ export const createSnow = (canvas: HTMLCanvasElement, initialOptions: SnowOption
   let lastTime: number | null = null;
 
   const simulation = createSimulation();
-  const renderer = createRenderer(canvas);
+  // An SVG or image flake finishing its load repaints, even while paused.
+  const renderer = createRenderer(canvas, () => {
+    if (!destroyed) draw();
+  });
 
   const effectiveOptions = () => (reducedMotion && options.respectReducedMotion ? reduceMotion(options) : options);
 
@@ -67,7 +70,7 @@ export const createSnow = (canvas: HTMLCanvasElement, initialOptions: SnowOption
   const applyOptions = () => {
     const effective = effectiveOptions();
     simulation.setOptions(effective);
-    renderer.setLook(effective.color, effective.size[1]);
+    renderer.setLook(effective.color, effective.size[1], effective.flake);
     updatePointerListener();
   };
 

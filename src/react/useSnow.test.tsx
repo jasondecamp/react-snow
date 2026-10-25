@@ -64,6 +64,15 @@ describe('useSnow', () => {
     expect(instance?.update).toHaveBeenCalledWith({ speed: 3, color: undefined });
   });
 
+  it('compares flake shapes by value', () => {
+    const { rerender } = render(<Harness options={{ flake: { svg: '<svg/>' } }} />);
+    const instance = live()[0];
+    rerender(<Harness options={{ flake: { svg: '<svg/>' } }} />);
+    expect(instance?.update).not.toHaveBeenCalled();
+    rerender(<Harness options={{ flake: { src: 'flake.png' } }} />);
+    expect(instance?.update).toHaveBeenCalledWith({ flake: { src: 'flake.png' } });
+  });
+
   it('applies a start made before the canvas mounts', () => {
     const { rerender } = render(<Harness showCanvas={false} />);
     act(() => controls.start());

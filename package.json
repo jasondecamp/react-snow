@@ -1,6 +1,6 @@
 {
   "name": "react-snow",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Falling snow on a canvas: a framework-free snow SDK with a React hook and component.",
   "license": "MIT",
   "author": "Jason DeCamp <jason@fourfightingfoxes.com>",
@@ -31,6 +31,7 @@
   "scripts": {
     "dev": "vite demo",
     "build": "tsc -p tsconfig.build.json",
+    "build:demo": "vite build demo",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

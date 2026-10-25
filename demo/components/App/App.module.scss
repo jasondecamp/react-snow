@@ -4,12 +4,12 @@
   position: relative;
   height: 100%;
   overflow: hidden;
-  background: linear-gradient($color-night-top, $color-night-bottom);
+  background: linear-gradient($color-night-top, $color-night-middle, $color-night-bottom);
   transition: background-color $transition-default;
 }
 
 .day {
-  background: linear-gradient($color-day-top, $color-day-bottom);
+  background: linear-gradient($color-day-top, $color-day-middle, $color-day-bottom);
 }
 
 .panel {

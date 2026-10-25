@@ -1,0 +1,10 @@
+@use 'field';
+
+.choice {
+  @include field.field;
+}
+
+.options {
+  display: flex;
+  gap: 1px;
+}

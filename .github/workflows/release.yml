@@ -3,7 +3,10 @@ name: Release
 # On every push to main, release package.json's version if it has no tag yet:
 # check, build, commit dist/ in a release-only commit on top of main (never
 # pushed to main itself), tag it v<version>, and create a GitHub Release.
-# Merges without a version bump find the tag already there and stop.
+# Merges without a version bump find the tag already there and stop. Each
+# release also publishes the playground to GitHub Pages. That has to happen
+# here: a separate workflow listening for releases would never fire, because
+# releases created with GITHUB_TOKEN don't trigger workflows.
 on:
   push:
     branches: [main]
@@ -19,6 +22,8 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-24.04
+    outputs:
+      released: ${{ steps.version.outputs.exists == 'false' }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -62,3 +67,31 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
         run: gh release create "$TAG" --verify-tag --generate-notes --title "$TAG"
+
+  # The playground at https://jasondecamp.github.io/react-snow/, built from the
+  # released source under the Pages base path.
+  pages:
+    needs: release
+    if: needs.release.outputs.released == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:demo --base /react-snow/
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: demo/dist
+      - id: deploy
+        uses: actions/deploy-pages@v5

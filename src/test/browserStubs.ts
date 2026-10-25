@@ -5,6 +5,12 @@ import { vi } from 'vitest';
 
 type FrameCallback = (time: number) => void;
 
+/** An image whose `src` was set. jsdom never loads images, so tests settle each one. */
+export type StubImage = { url: string; load: () => void; fail: () => void };
+
+/** Let pending promise callbacks (such as a settled image load) run. */
+export const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+
 export type BrowserStubs = {
   /** Run the pending animation frame, advancing the clock by `ms`. */
   frame: (ms?: number) => void;
@@ -14,6 +20,7 @@ export type BrowserStubs = {
   setVisible: (visible: boolean) => void;
   setReducedMotion: (reduced: boolean) => void;
   observers: { resize: { disconnected: boolean }[]; intersection: { disconnected: boolean }[] };
+  images: StubImage[];
   context: Record<string, unknown>;
   restore: () => void;
 };
@@ -27,6 +34,7 @@ export const stubBrowser = ({ width = 800, height = 400 } = {}): BrowserStubs =>
   const observers: BrowserStubs['observers'] = { resize: [], intersection: [] };
   let reducedMotion = false;
   const mediaListeners = new Set<() => void>();
+  const images: StubImage[] = [];
 
   const context: Record<string, unknown> = {
     setTransform: vi.fn(),
@@ -48,6 +56,14 @@ export const stubBrowser = ({ width = 800, height = 400 } = {}): BrowserStubs =>
   );
   vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => width);
   vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => height);
+
+  vi.spyOn(HTMLImageElement.prototype, 'src', 'set').mockImplementation(function (this: HTMLImageElement, url: string) {
+    images.push({
+      url,
+      load: () => this.onload?.(new Event('load')),
+      fail: () => this.onerror?.(new Event('error')),
+    });
+  });
 
   vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
     const id = nextId++;
@@ -105,6 +121,7 @@ export const stubBrowser = ({ width = 800, height = 400 } = {}): BrowserStubs =>
       mediaListeners.forEach((listener) => listener());
     },
     observers,
+    images,
     context,
     restore: () => {
       vi.restoreAllMocks();

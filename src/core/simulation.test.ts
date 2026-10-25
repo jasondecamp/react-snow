@@ -185,4 +185,39 @@ describe('createSimulation', () => {
     const alphas = all.map(({ alpha }) => alpha);
     expect(alphas).toEqual([...alphas].sort((a, b) => a - b));
   });
+
+  it('spins flakes in the air only with rotate', () => {
+    const angles = (simulation: ReturnType<typeof createSimulation>) => {
+      const all: number[] = [];
+      simulation.forEachFlake((_x, _y, _size, _alpha, _depth, angle) => all.push(angle));
+      return all;
+    };
+    const still = setup();
+    still.setSpawning(true);
+    run(still, 1);
+    expect(angles(still).every((angle) => angle === 0)).toBe(true);
+
+    const spinning = setup({ rotate: true });
+    spinning.setSpawning(true);
+    run(spinning, 1);
+    const before = angles(spinning);
+    spinning.step(0.1);
+    const after = angles(spinning);
+    expect(after.every((angle, index) => angle !== before[index])).toBe(true);
+  });
+
+  it('stops spinning flakes once they land', () => {
+    const simulation = setup({ rotate: true, groundTime: [100, 100] });
+    simulation.setSpawning(true);
+    run(simulation, 30);
+    simulation.setSpawning(false);
+    run(simulation, 30);
+    expect(simulation.groundedCount).toBeGreaterThan(0);
+    const before: number[] = [];
+    simulation.forEachFlake((_x, _y, _size, _alpha, _depth, angle) => before.push(angle));
+    simulation.step(0.1);
+    const after: number[] = [];
+    simulation.forEachFlake((_x, _y, _size, _alpha, _depth, angle) => after.push(angle));
+    expect(after).toEqual(before);
+  });
 });

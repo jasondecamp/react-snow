@@ -18,6 +18,10 @@ type Flake = {
   swayPhase: number;
   /** Radians per second. */
   swayRate: number;
+  /** Radians, drawn only with `rotate`. */
+  angle: number;
+  /** Radians per second, signed. */
+  spinRate: number;
   /** How far above the bottom edge the flake comes to rest. */
   restOffset: number;
   state: FlakeState;
@@ -34,8 +38,11 @@ type Flake = {
   landedAt: number;
 };
 
-/** Called for every visible flake: center position and diameter in CSS px, alpha, and depth (0 far to 1 near). */
-export type FlakeVisitor = (x: number, y: number, size: number, alpha: number, depth: number) => void;
+/**
+ * Called for every visible flake: center position and diameter in CSS px,
+ * alpha, depth (0 far to 1 near), and rotation in radians (0 without `rotate`).
+ */
+export type FlakeVisitor = (x: number, y: number, size: number, alpha: number, depth: number, angle: number) => void;
 
 export type Simulation = {
   setOptions: (options: ResolvedSnowOptions) => void;
@@ -75,6 +82,9 @@ const twinkleRate = 0.4;
 const twinkleFlickerHz = 15;
 const pointerEaseSeconds = 0.4;
 const maxRestOffset = 3;
+// Spin rates in radians per second, before the depth factor.
+const minSpinRate = Math.PI / 6;
+const maxSpinRate = Math.PI / 2;
 
 const lerp = (min: number, max: number, t: number) => min + (max - min) * t;
 
@@ -120,6 +130,8 @@ export const createSimulation = ({ random = Math.random, options: initialOptions
     flake.swayPhase = random() * Math.PI * 2;
     flake.swayRate = lerp(0.15, 0.45, random()) * Math.PI * 2;
     flake.restOffset = random() * maxRestOffset;
+    flake.angle = random() * Math.PI * 2;
+    flake.spinRate = lerp(minSpinRate, maxSpinRate, random()) * (random() < 0.5 ? -1 : 1);
     flake.x = random() * width;
     flake.y = spread == null ? random() * height : -flakeSize(flake) - random() * spread;
     flake.state = 'falling';
@@ -156,6 +168,7 @@ export const createSimulation = ({ random = Math.random, options: initialOptions
     flake.y += fallSpeed(flake) * dt;
     flake.x += driftSpeed(flake) * dt;
     flake.swayPhase += flake.swayRate * dt;
+    flake.angle = (flake.angle + flake.spinRate * depthFactor(flake.depth) * dt) % (Math.PI * 2);
     const margin = flakeSize(flake) + swayAmplitude(flake);
     if (flake.x > width + margin) flake.x = -margin;
     else if (flake.x < -margin) flake.x = width + margin;
@@ -284,7 +297,7 @@ export const createSimulation = ({ random = Math.random, options: initialOptions
         const flicker = flake.twinkle > 0 && Math.floor(flake.twinkle * twinkleFlickerHz) % 2 === 0 ? 0.15 : 1;
         const alpha = lerp(options.opacity[0], options.opacity[1], flake.depth) * (1 - progress) * flicker;
         const x = flake.airborne ? flake.x + swayAmplitude(flake) * Math.sin(flake.swayPhase) : flake.x;
-        visitor(x, flake.y, flakeSize(flake) * scale, alpha, flake.depth);
+        visitor(x, flake.y, flakeSize(flake) * scale, alpha, flake.depth, options.rotate ? flake.angle : 0);
       }
     },
     get flakeCount() {

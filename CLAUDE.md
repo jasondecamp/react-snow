@@ -16,6 +16,7 @@ The toolchain lands with 0.1.0.
 pnpm install          # Node 24, pnpm 12
 pnpm dev              # demo playground (Vite) at http://localhost:5317, imports from src/
 pnpm build            # tsc -> dist/ (ESM .js + .d.ts)
+pnpm build:demo       # playground -> demo/dist/ (release.yml adds --base /react-snow/ for Pages)
 pnpm lint             # ESLint 10 flat config
 pnpm typecheck        # tsc --noEmit
 pnpm test             # Vitest
@@ -38,7 +39,7 @@ pnpm test             # Vitest
 
 - Source is TypeScript, compiled by plain `tsc` (no bundler) to per-file ESM in `dist/`. Relative imports in `src/` use `.js` extensions so the output is valid Node ESM. TypeScript is pinned to 6.0 because typescript-eslint doesn't support 7 yet; revisit when it does. `dist/` is git-ignored on `main`.
 - `package.json` `exports` map `.` to the React entry and `./core` to the core entry. `react` (>= 19) is an optional peer dependency. `sideEffects: false`.
-- **Releases:** bump `version` in a PR. When it merges, `.github/workflows/release.yml` sees a version with no matching tag, then lints, tests, builds, commits `dist/` in a release-only commit, tags `v<version>`, and creates a GitHub Release. Merges without a bump don't release.
+- **Releases:** bump `version` in a PR. When it merges, `.github/workflows/release.yml` sees a version with no matching tag, then lints, tests, builds, commits `dist/` in a release-only commit, tags `v<version>`, and creates a GitHub Release. A second job deploys the playground to GitHub Pages at `https://jasondecamp.github.io/react-snow/`. Merges without a bump don't release.
 - Consumers install `github:jasondecamp/react-snow#v<version>` or `#semver:^<range>`. `#main` installs don't work, because `main` has no `dist/`.
 
 ### Directory structure

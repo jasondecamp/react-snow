@@ -29,7 +29,7 @@ const simulationGlobals = ['window', 'document', 'navigator', 'requestAnimationF
 }));
 
 export default defineConfig([
-  globalIgnores(['dist/**', 'coverage/**', 'node_modules/**']),
+  globalIgnores(['dist/**', 'demo/dist/**', 'coverage/**', 'node_modules/**']),
   {
     files: ['**/*.{js,ts,tsx}'],
     extends: [

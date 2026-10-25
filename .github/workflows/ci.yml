@@ -28,5 +28,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      # The playground too, since each release deploys it to GitHub Pages.
+      - run: pnpm build:demo
       # The built entry points load as plain ESM, as a consumer's bundler sees them.
       - run: node --input-type=module -e "await import('./dist/core/index.js'); await import('./dist/react/index.js');"

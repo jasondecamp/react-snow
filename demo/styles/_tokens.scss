@@ -13,10 +13,14 @@ $font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
 $font-size-s: 12px;
 $font-size-m: 14px;
 
-$color-night-top: #0b1026;
-$color-night-bottom: #2a3a5e;
-$color-day-top: #dfe7ef;
-$color-day-bottom: #f7f9fb;
+// Night is a dark sunset: near-black sky with an ember glow on the horizon.
+// Day is a sunrise: morning blue most of the way down, blushing rosy at the horizon.
+$color-night-top: #07061a;
+$color-night-middle: #2a1734;
+$color-night-bottom: #8a4130;
+$color-day-top: #a9c6e8;
+$color-day-middle: #c4d4ea;
+$color-day-bottom: #f0cfcb;
 $color-panel: rgba(12, 16, 32, 0.82);
 $color-panel-border: rgba(255, 255, 255, 0.12);
 $color-text: #e8ecf4;
