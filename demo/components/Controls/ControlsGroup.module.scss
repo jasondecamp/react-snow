@@ -1,0 +1,18 @@
+@use '../../styles/tokens' as *;
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-s;
+  margin: 0;
+  padding: $space-s $space-m $space-m;
+  border: 1px solid $color-panel-border;
+  border-radius: $radius;
+}
+
+.title {
+  padding: 0 $space-xs;
+  font-size: $font-size-s;
+  font-weight: 600;
+  color: $color-text-muted;
+}

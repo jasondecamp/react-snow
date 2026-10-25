@@ -1,0 +1,17 @@
+@use '../../styles/tokens' as *;
+
+.logo {
+  position: absolute;
+  top: $space-m;
+  left: $space-m;
+  width: $logo-size;
+  height: $logo-size;
+  pointer-events: none;
+  background: $color-logo-night;
+  mask: url('/favicon.svg') center / contain no-repeat;
+  transition: background $transition-default;
+}
+
+.day {
+  background: $color-logo-day;
+}

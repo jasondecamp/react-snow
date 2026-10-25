@@ -1,0 +1,53 @@
+@use '../../styles/tokens' as *;
+
+.toggle {
+  display: flex;
+  flex-direction: column;
+  gap: $space-s;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-s;
+  cursor: pointer;
+}
+
+.input {
+  position: relative;
+  flex: none;
+  width: $switch-width;
+  height: $switch-height;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+  background: $color-track;
+  border-radius: $switch-height;
+  transition: background $transition-default;
+
+  &::before {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: $switch-height - 4px;
+    height: $switch-height - 4px;
+    content: '';
+    background: $color-text;
+    border-radius: 50%;
+    transition: transform $transition-default;
+  }
+
+  &:checked {
+    background: $color-accent;
+
+    &::before {
+      transform: translateX($switch-width - $switch-height);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus-ring;
+    outline-offset: 2px;
+  }
+}

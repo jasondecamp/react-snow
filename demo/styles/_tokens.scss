@@ -1,0 +1,43 @@
+// Variables only: @use never emits CSS.
+
+$space-xs: 4px;
+$space-s: 8px;
+$space-m: 16px;
+$space-l: 24px;
+
+$radius: 8px;
+$transition-default: 0.2s;
+
+$font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+$font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+$font-size-s: 12px;
+$font-size-m: 14px;
+
+$color-night-top: #0b1026;
+$color-night-bottom: #2a3a5e;
+$color-day-top: #dfe7ef;
+$color-day-bottom: #f7f9fb;
+$color-panel: rgba(12, 16, 32, 0.82);
+$color-panel-border: rgba(255, 255, 255, 0.12);
+$color-text: #e8ecf4;
+$color-text-muted: #9aa5bd;
+$color-accent: #aa3f3c;
+$color-switch-dark: $color-night-top;
+$color-switch-light: $color-day-top;
+$color-switch-knob-dark: $color-panel;
+$color-switch-knob-light: $color-text;
+$color-logo-night: #fff;
+$color-logo-day: #333;
+$color-track: rgba(255, 255, 255, 0.18);
+$color-focus-ring: rgba(170, 63, 60, 0.45);
+
+$panel-width: 320px;
+
+$thumb-size: 16px;
+$track-height: 4px;
+$switch-width: 32px;
+$switch-height: 18px;
+$inline-label-width: 32px;
+$sky-toggle-width: 56px;
+$sky-toggle-height: 28px;
+$logo-size: 50px;

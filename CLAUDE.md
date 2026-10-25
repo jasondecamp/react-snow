@@ -14,7 +14,7 @@ The toolchain lands with 0.1.0.
 
 ```bash
 pnpm install          # Node 24, pnpm 12
-pnpm dev              # demo playground (Vite) at http://localhost:5173, imports from src/
+pnpm dev              # demo playground (Vite) at http://localhost:5317, imports from src/
 pnpm build            # tsc -> dist/ (ESM .js + .d.ts)
 pnpm lint             # ESLint 10 flat config
 pnpm typecheck        # tsc --noEmit
@@ -27,7 +27,7 @@ pnpm test             # Vitest
 
 - **`src/core/`** has no framework dependency. It contains the simulation, the canvas renderer, sprites, and `createSnow`, exported as `react-snow/core`.
   - The **simulation** is pure: flakes, physics, and ground state, advanced by `step(dt)`. It never touches `window`, `document`, or the canvas, and takes its random source and clock as inputs so tests are deterministic.
-  - The **renderer** draws simulation state to a 2D canvas from pre-rendered sprites (one per flake size). New flake looks (SVG, images) are new sprite sources, never per-frame drawing code.
+  - The **renderer** draws simulation state to a 2D canvas from a pre-rendered sprite (rendered once at twice the largest flake size and scaled down with `drawImage`). New flake looks (SVG, images) are new sprite sources, never per-frame drawing code.
   - **`createSnow(canvas, options)`** wires them together with `requestAnimationFrame`, `ResizeObserver`, `IntersectionObserver`, `matchMedia('(prefers-reduced-motion: reduce)')`, and pointer listeners. It never inserts DOM. Every resource it acquires is released by `destroy()`.
 - **`src/react/`** contains `useSnow` and `Snow`, exported as `react-snow`. It may import from core, but core never imports from React.
   - `useSnow(options)` is the **imperative** layer. It returns `{ ref, start, stop, pause, resume, clear }` with stable identities and diffs the options key by key into `update()`. It is idle until `start()`.
@@ -36,7 +36,7 @@ pnpm test             # Vitest
 
 ### Distribution
 
-- Source is TypeScript, compiled by plain `tsc` (no bundler) to per-file ESM in `dist/`. `dist/` is git-ignored on `main`.
+- Source is TypeScript, compiled by plain `tsc` (no bundler) to per-file ESM in `dist/`. Relative imports in `src/` use `.js` extensions so the output is valid Node ESM. TypeScript is pinned to 6.0 because typescript-eslint doesn't support 7 yet; revisit when it does. `dist/` is git-ignored on `main`.
 - `package.json` `exports` map `.` to the React entry and `./core` to the core entry. `react` (>= 19) is an optional peer dependency. `sideEffects: false`.
 - **Releases:** bump `version` in a PR. When it merges, `.github/workflows/release.yml` sees a version with no matching tag, then lints, tests, builds, commits `dist/` in a release-only commit, tags `v<version>`, and creates a GitHub Release. Merges without a bump don't release.
 - Consumers install `github:jasondecamp/react-snow#v<version>` or `#semver:^<range>`. `#main` installs don't work, because `main` has no `dist/`.
@@ -45,9 +45,10 @@ pnpm test             # Vitest
 
 ```
 src/
-  core/                       # simulation, renderer, sprites, createSnow, types, index.ts
+  core/                       # simulation, renderer, sprites, createSnow, options, types, index.ts
   react/                      # useSnow.ts, Snow.tsx, index.ts
-demo/                         # Vite playground, not published
+  test/                       # test helpers (seeded random, browser stubs, fake createSnow); not built
+demo/                         # Vite playground, not published; imports 'react-snow' aliased to src/
   components/<Name>/          # <Name>.tsx + <Name>.module.scss
 docs/PLAN.md
 .github/workflows/            # ci.yml, release.yml
@@ -108,6 +109,7 @@ docs/PLAN.md
   - Simulation tests run in the `node` environment (`// @vitest-environment node`) with an injected random source and clock.
   - Renderer, hook, and component tests run in jsdom with a stubbed 2D context (jsdom has no canvas). Use Testing Library and `@testing-library/user-event` for interaction.
   - Cover StrictMode (mount, unmount, mount): no leaked loops, observers, or listeners.
+  - The React Compiler lint rules (eslint-plugin-react-hooks 7) treat reading a `.ref` property during render as a ref access: destructure `ref` from `useSnow` before using it in JSX.
 - Validate before shipping: run lint, typecheck, tests, and the build before calling anything done. Visual behavior is checked by Jason in the demo playground on his own `pnpm dev`; don't start a second dev server on the same port.
 - Skip re-running the test suite for style-only (SCSS) demo changes.
 
