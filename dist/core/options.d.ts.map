@@ -1,0 +1,1 @@
+{"version":3,"file":"options.d.ts","sourceRoot":"","sources":["../../src/core/options.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAS,mBAAmB,EAAE,WAAW,EAAE,MAAM,YAAY,CAAC;AAE1E,eAAO,MAAM,cAAc,EAAE,mBAmB5B,CAAC;AAgBF,4FAA4F;AAC5F,eAAO,MAAM,cAAc,GAAI,SAAS,WAAW,KAAG,mBAkBrD,CAAC;AAEF,2EAA2E;AAC3E,eAAO,MAAM,YAAY,GAAI,SAAS,mBAAmB,KAAG,mBAM1D,CAAC"}
