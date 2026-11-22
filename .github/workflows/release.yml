@@ -6,10 +6,12 @@ name: Release
 # Merges without a version bump find the tag already there and stop. Each
 # release also publishes the playground to GitHub Pages. That has to happen
 # here: a separate workflow listening for releases would never fire, because
-# releases created with GITHUB_TOKEN don't trigger workflows.
+# releases created with GITHUB_TOKEN don't trigger workflows. Running this
+# workflow by hand redeploys the playground without releasing.
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 # One release at a time, never interrupted partway.
 concurrency:
@@ -68,11 +70,11 @@ jobs:
           TAG: ${{ steps.version.outputs.tag }}
         run: gh release create "$TAG" --verify-tag --generate-notes --title "$TAG"
 
-  # The playground at https://jasondecamp.github.io/react-snow/, built from the
-  # released source under the Pages base path.
+  # The playground at https://snow.fourfightingfoxes.com/ (the custom domain is
+  # set in the repo's Pages settings), served from the domain root.
   pages:
     needs: release
-    if: needs.release.outputs.released == 'true'
+    if: needs.release.outputs.released == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -89,7 +91,7 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build:demo --base /react-snow/
+      - run: pnpm build:demo
       - uses: actions/upload-pages-artifact@v5
         with:
           path: demo/dist
