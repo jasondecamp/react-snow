@@ -4,7 +4,7 @@
 
 Falling snow on a `<canvas>`: a framework-free snow SDK, plus a React hook (`useSnow`) and component (`<Snow>`).
 
-Try every option in the [playground](https://jasondecamp.github.io/react-snow/).
+Try every option in the [playground](https://snow.fourfightingfoxes.com/).
 
 - One canvas per storm, drawn from pre-rendered sprites. Hundreds of flakes cost about what a handful of DOM nodes would.
 - Delta-time physics: the same speed at 60Hz and 120Hz.
